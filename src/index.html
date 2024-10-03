@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Solana Devnet Faucet</title>
+    <style>
+    :root {
+       --body-bg: #14F195;
+       --body-color: #1c1e21;
+    }
+    @media (prefers-color-scheme: dark) {
+       :root {
+           --body-bg: #1c1e21;
+           --body-color: #14F195;
+       }
+    }
+    body {
+        background: var(--body-bg);
+        color: var(--body-color);
+        font-family: sans-serif;
+    }
+    fieldset {
+        transition: all .3s linear;
+    }
+    fieldset:disabled {
+        opacity: 0.5;
+    }
+    </style>
+</head>
+<body>
+    <h1>Solana Devnet Faucet</h1>
+    <form>
+        <fieldset>
+            <legend>Enter Your Account Address</legend>
+            <input name="addr" type="text" placeholder="Solana Account Address" />
+            <input type="submit" value="Request 1 SOL" />
+        </fieldset>
+        <div><pre><code></code></pre></div>
+    </form>
+    <script>
+        const form = document.querySelector("form");
+        const fieldset = form.querySelector("fieldset");
+        const result = form.querySelector("code");
+        form.addEventListener("submit", async e => {
+            try {
+                e.preventDefault();
+                const data = new FormData(e.target);
+                result.innerText = "Submitting request...";
+                fieldset.disabled = true;
+                const res = await fetch(`/airdrop/${data.get("addr")}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }
+                });
+                result.innerText = await res.text();
+            } catch(err) {
+                result.innerText = err.message ?? "Request failed. Try again later.";
+            } finally {
+                fieldset.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
